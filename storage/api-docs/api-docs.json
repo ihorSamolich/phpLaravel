@@ -1,0 +1,192 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Усіх із Паскох",
+        "description": "Demo my Project ",
+        "contact": {
+            "email": "admin@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/categories": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "d1f6c377f807ef0e6417aaa000d81e3c",
+                "responses": {
+                    "200": {
+                        "description": "List Categories."
+                    }
+                }
+            }
+        },
+        "/api/categories/create": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "196294aada4810311bbc2174c5af76d1",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "image",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "type": "file"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
+            }
+        },
+        "/api/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "c5916df093e6352c5f6d7cce5d754f17",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get Category by ID."
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "9df31785d832daffd2d890c12792b58c",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Delete Category by ID."
+                    }
+                }
+            }
+        },
+        "/api/categories/edit/{id}": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "c89ca3d973041c422881f82b1766d637",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ідентифікатор категорії",
+                        "required": true,
+                        "schema": {
+                            "type": "number",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "type": "file"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
+            }
+        },
+        "/api/send/email": {
+            "post": {
+                "tags": [
+                    "Sender"
+                ],
+                "operationId": "fca2a89c2ac3ccda341e90161c1a8d73",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Category."
+                    }
+                }
+            }
+        }
+    }
+}
