@@ -47,13 +47,15 @@ services:
             - my-laravel-network
 
     app:
-        image: ihorsamolich/laravel-docker
-#        build:
-#            context: .
-#            dockerfile: Dockerfile
+#        image: ihorsamolich/laravel-docker
+        build:
+            context: .
+            dockerfile: Dockerfile
         depends_on:
             - db
         ports:
             - "8000:8000"
+#        volumes:
+#            - uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
         networks:
             - my-laravel-network
