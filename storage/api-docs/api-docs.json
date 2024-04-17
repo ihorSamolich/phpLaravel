@@ -158,6 +158,66 @@
                 }
             }
         },
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "f3de3d563fcb23851839e275635734f5",
+                "responses": {
+                    "200": {
+                        "description": "List Products."
+                    }
+                }
+            }
+        },
+        "/api/products/create": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "41bc0338fd51e9e24725c1b666dabf10",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "image",
+                                    "description",
+                                    "price",
+                                    "category_id"
+                                ],
+                                "properties": {
+                                    "image": {
+                                        "type": "file"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "price": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "category_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Add Product."
+                    }
+                }
+            }
+        },
         "/api/send/email": {
             "post": {
                 "tags": [
