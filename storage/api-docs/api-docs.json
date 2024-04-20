@@ -183,15 +183,11 @@
                             "schema": {
                                 "required": [
                                     "name",
-                                    "image",
                                     "description",
                                     "price",
                                     "category_id"
                                 ],
                                 "properties": {
-                                    "image": {
-                                        "type": "file"
-                                    },
                                     "name": {
                                         "type": "string"
                                     },
@@ -244,6 +240,19 @@
                 "responses": {
                     "200": {
                         "description": "Add Category."
+                    }
+                }
+            }
+        },
+        "/api/specialOffers": {
+            "get": {
+                "tags": [
+                    "SpecialOffers"
+                ],
+                "operationId": "9613eb3321be8e4548d689fb5dd38bcb",
+                "responses": {
+                    "200": {
+                        "description": "List SpecialOffers."
                     }
                 }
             }

@@ -29,7 +29,7 @@ class SenderController extends Controller
      *     @OA\Response(response="200", description="Add Category.")
      * )
      */
-    public function send_email(Request $request) : JsonResponse
+    public function send_email(Request $request): JsonResponse
     {
         $inputs = $request->all();
         Mail::to($inputs["email"])->send(new SampleEmail());

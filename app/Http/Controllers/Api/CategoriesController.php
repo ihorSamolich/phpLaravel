@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+
 class CategoriesController extends Controller
 {
     /**
@@ -17,7 +18,8 @@ class CategoriesController extends Controller
      *     @OA\Response(response="200", description="List Categories.")
      * )
      */
-    public function getList() {
+    public function getList()
+    {
         $data = Categories::all();
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
@@ -51,34 +53,34 @@ class CategoriesController extends Controller
      * )
      */
 
-public function create(Request $request) : JsonResponse
-{
-    if ($request->hasFile('image')) {
-        $takeImage = $request->file('image');
-        $manager = new ImageManager(new Driver());
+    public function create(Request $request): JsonResponse
+    {
+        if ($request->hasFile('image')) {
+            $takeImage = $request->file('image');
+            $manager = new ImageManager(new Driver());
 
-        $filename = time();
+            $filename = time();
 
-        $sizes = [100, 300, 500];
+            $sizes = [100, 300, 500];
 
-        foreach ($sizes as $size) {
-            $image = $manager->read($takeImage);
-            $image->scale(width: $size, height: $size);
-            $image->toWebp()->save(base_path('public/uploads/'.$size.'_'.$filename.'.webp'));
+            foreach ($sizes as $size) {
+                $image = $manager->read($takeImage);
+                $image->scale(width: $size, height: $size);
+                $image->toWebp()->save(base_path('public/uploads/' . $size . '_' . $filename . '.webp'));
+            }
         }
+
+        $category = Categories::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            //'image' => '.webp',
+            'image' => $filename . '.webp',
+
+        ]);
+
+        return response()->json($category, 201)
+            ->header("Content-Type", 'application/json; charset=utf-8');
     }
-
-    $category = Categories::create([
-        'name' => $request->name,
-        'description' => $request->description,
-        //'image' => '.webp',
-        'image' => $filename.'.webp',
-
-    ]);
-
-    return response()->json($category, 201)
-        ->header("Content-Type", 'application/json; charset=utf-8');
-}
 
 
     /**
@@ -95,7 +97,7 @@ public function create(Request $request) : JsonResponse
      *     @OA\Response(response="200", description="Get Category by ID.")
      * )
      */
-    public function show($id) : JsonResponse
+    public function show($id): JsonResponse
     {
         $category = Categories::findOrFail($id);
         return response()->json($category);
@@ -138,11 +140,12 @@ public function create(Request $request) : JsonResponse
      *     @OA\Response(response="200", description="Add Category.")
      * )
      */
-    public function edit($id, Request $request) : JsonResponse {
+    public function edit($id, Request $request): JsonResponse
+    {
         $category = Categories::findOrFail($id);
-        $imageName=$category->image;
+        $imageName = $category->image;
         $inputs = $request->all();
-        if($request->hasFile("image")) {
+        if ($request->hasFile("image")) {
             $image = $request->file("image");
             $imageName = uniqid() . ".webp";
             $sizes = [100, 300, 500];
@@ -154,14 +157,14 @@ public function create(Request $request) : JsonResponse
                 $imageRead->scale(width: $size);
                 $path = public_path('uploads/' . $fileSave);
                 $imageRead->toWebp()->save($path);
-                $removeImage = public_path('uploads/'.$size."_". $category->image);
-                if(file_exists($removeImage))
+                $removeImage = public_path('uploads/' . $size . "_" . $category->image);
+                if (file_exists($removeImage))
                     unlink($removeImage);
             }
         }
-        $inputs["image"]= $imageName;
+        $inputs["image"] = $imageName;
         $category->update($inputs);
-        return response()->json($category,200,
+        return response()->json($category, 200,
             ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE);
     }
 
@@ -220,7 +223,7 @@ public function create(Request $request) : JsonResponse
      *     @OA\Response(response="200", description="Delete Category by ID.")
      * )
      */
-    public function delete($id) : JsonResponse
+    public function delete($id): JsonResponse
     {
         $category = Categories::findOrFail($id);
         $category->delete();

@@ -19,12 +19,12 @@ class ProductsController extends Controller
      *     @OA\Response(response="200", description="List Products.")
      * )
      */
-    public function getList() {
-        $data = Products::all();
+    public function getList()
+    {
+        $data = Products::with('product_images')->get();
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
     }
-
 
 
     /**
@@ -35,11 +35,7 @@ class ProductsController extends Controller
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
      *             @OA\Schema(
-     *                  required={"name","image","description","price", "category_id"},
-     *                  @OA\Property(
-     *                       property="image",
-     *                       type="file",
-     *                   ),
+     *                  required={"name","description","price", "category_id"},
      *                  @OA\Property(
      *                       property="name",
      *                       type="string"
@@ -64,30 +60,13 @@ class ProductsController extends Controller
      * )
      */
 
-    public function create(Request $request) : JsonResponse
+    public function create(Request $request): JsonResponse
     {
-        if ($request->hasFile('image')) {
-            $takeImage = $request->file('image');
-            $manager = new ImageManager(new Driver());
-
-            $filename = time();
-
-            $sizes = [100, 300, 500];
-
-            foreach ($sizes as $size) {
-                $image = $manager->read($takeImage);
-                $image->scale(width: $size, height: $size);
-                $image->toWebp()->save(base_path('public/uploads/'.$size.'_'.$filename.'.webp'));
-            }
-        }
-
         $product = Products::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category_id' => $request->category_id,
-            'image' => $filename.'.webp',
-
         ]);
 
         return response()->json($product, 201)

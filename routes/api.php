@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SenderController;
+use App\Http\Controllers\Api\SpecialOffersController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,5 @@ Route::post('/send/email', [SenderController::class, 'send_email']);
 
 Route::get('/products', [ProductsController::class, 'getList']);
 Route::post('/products/create', [ProductsController::class, 'create']);
+
+Route::get('/specialOffers', [SpecialOffersController::class, 'getList']);
