@@ -42,7 +42,7 @@ class ProductsController extends Controller
      */
     public function getByCategory($id)
     {
-        $products = Products::where('category_id', $id)->get();
+        $products = Products::where('category_id', $id)->with('product_images')->get();
 
         return response()->json($products)
             ->header("Content-Type", 'application/json; charset=utf-8');
