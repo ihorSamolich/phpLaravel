@@ -171,6 +171,30 @@
                 }
             }
         },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "b6d58ed6d2c7fb3747b83088af4b9586",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Category ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get Products by Category ID."
+                    }
+                }
+            }
+        },
         "/api/products/create": {
             "post": {
                 "tags": [

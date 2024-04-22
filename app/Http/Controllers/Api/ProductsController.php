@@ -26,6 +26,28 @@ class ProductsController extends Controller
             ->header("Content-Type", 'application/json; charset=utf-8');
     }
 
+    /**
+     * @OA\Get(
+     *     tags={"Product"},
+     *     path="/api/products/{id}",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="Category ID",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response="200", description="Get Products by Category ID.")
+     * )
+     */
+    public function getByCategory($id)
+    {
+        $products = Products::where('category_id', $id)->get();
+
+        return response()->json($products)
+            ->header("Content-Type", 'application/json; charset=utf-8');
+    }
+
 
     /**
      * @OA\Post(
