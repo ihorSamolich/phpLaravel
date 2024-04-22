@@ -15,15 +15,36 @@ class CategoriesController extends Controller
      * @OA\Get(
      *     tags={"Category"},
      *     path="/api/categories",
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="The page number to retrieve",
+     *         @OA\Schema(
+     *             type="integer",
+     *             default=1
+     *         )
+     *     ),
      *     @OA\Response(response="200", description="List Categories.")
      * )
      */
-    public function getList()
+    public function getList(Request $request)
     {
-        $data = Categories::all();
-        return response()->json($data)
-            ->header("Content-Type", 'application/json; charset=utf-8');
+        $perPage = 8;
+        $page = $request->query('page', 1);
+
+        $data = Categories::paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json($data)->header("Content-Type", 'application/json; charset=utf-8');
     }
+
+    //    public function getList()
+//    {
+//        $perPage = 8;
+//
+//        $data = Categories::paginate($perPage);
+//        return response()->json($data)
+//            ->header("Content-Type", 'application/json; charset=utf-8');
+//    }
 
     /**
      * @OA\Post(

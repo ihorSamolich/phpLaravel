@@ -21,7 +21,9 @@ class ProductsController extends Controller
      */
     public function getList()
     {
-        $data = Products::with('product_images')->get();
+        $perPage = 5; // Кількість записів на одній сторінці
+
+        $data = Products::with('product_images')->paginate($perPage);
         return response()->json($data)
             ->header("Content-Type", 'application/json; charset=utf-8');
     }
