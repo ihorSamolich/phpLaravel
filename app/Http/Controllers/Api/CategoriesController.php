@@ -29,7 +29,7 @@ class CategoriesController extends Controller
      */
     public function getList(Request $request)
     {
-        $perPage = 8;
+        $perPage = 4;
         $page = $request->query('page', 1);
 
         $data = Categories::paginate($perPage, ['*'], 'page', $page);
