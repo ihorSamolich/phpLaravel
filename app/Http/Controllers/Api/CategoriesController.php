@@ -11,6 +11,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class CategoriesController extends Controller
 {
+
     /**
      * @OA\Get(
      *     tags={"Category"},
@@ -24,6 +25,14 @@ class CategoriesController extends Controller
      *             default=1
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         name="search",
+     *         in="query",
+     *         description="Search term to filter categories",
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(response="200", description="List Categories.")
      * )
      */
@@ -31,20 +40,46 @@ class CategoriesController extends Controller
     {
         $perPage = 4;
         $page = $request->query('page', 1);
+        $searchTerm = $request->query('search');
 
-        $data = Categories::paginate($perPage, ['*'], 'page', $page);
+        $query = Categories::query();
+
+        if ($searchTerm) {
+            $query->where('name', 'like', "%{$searchTerm}%");
+        }
+
+        $data = $query->paginate($perPage, ['*'], 'page', $page);
 
         return response()->json($data)->header("Content-Type", 'application/json; charset=utf-8');
     }
 
-    //    public function getList()
+//    /**
+//     * @OA\Get(
+//     *     tags={"Category"},
+//     *     path="/api/categories",
+//     *     @OA\Parameter(
+//     *         name="page",
+//     *         in="query",
+//     *         description="The page number to retrieve",
+//     *         @OA\Schema(
+//     *             type="integer",
+//     *             default=1
+//     *         )
+//     *     ),
+//     *     @OA\Response(response="200", description="List Categories.")
+//     * )
+//     */
+//    public function getList(Request $request)
 //    {
-//        $perPage = 8;
+//        $perPage = 4;
+//        $page = $request->query('page', 1);
 //
-//        $data = Categories::paginate($perPage);
-//        return response()->json($data)
-//            ->header("Content-Type", 'application/json; charset=utf-8');
+//
+//        $data = Categories::paginate($perPage, ['*'], 'page', $page);
+//
+//        return response()->json($data)->header("Content-Type", 'application/json; charset=utf-8');
 //    }
+
 
     /**
      * @OA\Post(

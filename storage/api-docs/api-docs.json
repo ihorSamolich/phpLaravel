@@ -28,6 +28,14 @@
                             "type": "integer",
                             "default": 1
                         }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Search term to filter categories",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
