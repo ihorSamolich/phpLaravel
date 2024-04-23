@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\SenderController;
@@ -25,3 +26,5 @@ Route::get('/products/{id}', [ProductsController::class, 'getByCategory']);
 Route::post('/products/create', [ProductsController::class, 'create']);
 
 Route::get('/specialOffers', [SpecialOffersController::class, 'getList']);
+
+Route::post('/login', [AuthController::class, 'login']);
