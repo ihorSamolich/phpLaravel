@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="Усіх із Паскох",
+ *      title="Api Docs",
  *      description="Demo my Project ",
  *      @OA\Contact(
  *          email="admin@gmail.com"
@@ -16,7 +16,6 @@ namespace App\Http\Controllers;
  *     )
  * )
  */
-
 abstract class Controller
 {
     //

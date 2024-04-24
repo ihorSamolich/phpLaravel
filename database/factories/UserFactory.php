@@ -5,6 +5,8 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -23,12 +25,31 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $imageUrl = "https://source.unsplash.com/random/?person";
+        $imageContent = file_get_contents($imageUrl);
+
+        $folderName = public_path('uploads');
+        if (!file_exists($folderName)) {
+            mkdir($folderName, 0777);
+        }
+
+        $imageName = uniqid() . ".webp";
+        $sizes = [100, 300, 500];
+        $manager = new ImageManager(new Driver());
+        foreach ($sizes as $size) {
+            $fileSave = $size . "_" . $imageName;
+            $imageRead = $manager->read($imageContent);
+            $imageRead->scale(width: $size);
+            $path = public_path('uploads/' . $fileSave);
+            $imageRead->toWebp()->save($path);
+        }
+
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'phone' => fake()->unique()->phoneNumber(),
             'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'image' => $imageName,
         ];
     }
 

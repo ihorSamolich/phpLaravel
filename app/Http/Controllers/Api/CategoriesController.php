@@ -129,7 +129,6 @@ class CategoriesController extends Controller
         $category = Categories::create([
             'name' => $request->name,
             'description' => $request->description,
-            //'image' => '.webp',
             'image' => $filename . '.webp',
 
         ]);

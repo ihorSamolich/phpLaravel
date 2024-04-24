@@ -28,3 +28,5 @@ Route::post('/products/create', [ProductsController::class, 'create']);
 Route::get('/specialOffers', [SpecialOffersController::class, 'getList']);
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/users', [AuthController::class, 'getList']);
+Route::post('/register', [AuthController::class, 'register']);
