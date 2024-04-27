@@ -24,11 +24,11 @@ class DatabaseSeeder extends Seeder
         if (UserAlias::count() == 0) UserAlias::factory(10)->create();
 
         if (Categories::count() == 0) {
-            Categories::factory(10)->create();
+            Categories::factory(20)->create();
         }
 
         if (Products::count() == 0) {
-            for ($y = 0; $y < 10; $y++) {
+            for ($y = 0; $y < 50; $y++) {
                 Products::factory(1)->create();
                 $numberOfIterations = rand(1, 5);
                 for ($i = 0; $i < $numberOfIterations; $i++) {

@@ -42,7 +42,7 @@ class CategoriesController extends Controller
         $page = $request->query('page', 1);
         $searchTerm = $request->query('search');
 
-        $query = Categories::query();
+        $query = Categories::query()->where('is_delete', false);
 
         if ($searchTerm) {
             $query->where('name', 'like', "%{$searchTerm}%");
@@ -281,8 +281,8 @@ class CategoriesController extends Controller
     public function delete($id): JsonResponse
     {
         $category = Categories::findOrFail($id);
-        $category->delete();
-
+        $category->update(['is_delete' => true]);
+        
         return response()->json(['message' => 'Category deleted successfully']);
     }
 
