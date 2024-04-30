@@ -38,6 +38,30 @@ class ProductsController extends Controller
             ->header("Content-Type", 'application/json; charset=utf-8');
     }
 
+    /**
+     * @OA\Get(
+     *     tags={"Product"},
+     *     path="/api/products/discounts",
+     *     @OA\Response(response="200", description="List Discounted Products.")
+     * )
+     */
+    public function getListDiscounts()
+    {
+        $query = Products::with('product_images')
+            ->whereNotNull('discount_percentage')
+            ->whereDate('discount_start_date', '<=', now())
+            ->whereDate('discount_end_date', '>=', now());
+
+        $discountedProducts = $query->get();
+
+        $randomProducts = $discountedProducts->random(4);
+
+        return response()->json($randomProducts)
+            ->header("Content-Type", 'application/json; charset=utf-8');
+    }
+
+
+
 //    /**
 //     * @OA\Get(
 //     *     tags={"Product"},

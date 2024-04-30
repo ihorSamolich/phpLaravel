@@ -319,6 +319,19 @@
                 }
             }
         },
+        "/api/products/discounts": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "c869a5a1d81e4632d5b0d65557978933",
+                "responses": {
+                    "200": {
+                        "description": "List Discounted Products."
+                    }
+                }
+            }
+        },
         "/api/products/{id}": {
             "get": {
                 "tags": [

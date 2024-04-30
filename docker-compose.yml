@@ -21,9 +21,9 @@ services:
     #      dockerfile: Dockerfile
     #    depends_on:
     #      - db
+    volumes:
+      - /data/website/images:/var/www/html/public/uploads
     ports:
       - "8000:8000"
-    #        volumes:
-    #            - uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     networks:
       - my-laravel-network

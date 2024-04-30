@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         }
 
         if (Products::count() == 0) {
-            for ($y = 0; $y < 50; $y++) {
+            for ($y = 0; $y < 20; $y++) {
                 Products::factory(1)->create();
                 $numberOfIterations = rand(1, 5);
                 for ($i = 0; $i < $numberOfIterations; $i++) {

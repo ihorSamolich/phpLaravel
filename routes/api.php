@@ -20,9 +20,9 @@ Route::delete('/categories/{id}', [CategoriesController::class, 'delete']);
 
 Route::post('/send/email', [SenderController::class, 'send_email']);
 
+Route::get('/products/discounts', [ProductsController::class, 'getListDiscounts']);
 Route::get('/products', [ProductsController::class, 'getList']);
 Route::get('/products/{id}', [ProductsController::class, 'getByCategory']);
-
 Route::post('/products/create', [ProductsController::class, 'create']);
 
 Route::get('/specialOffers', [SpecialOffersController::class, 'getList']);
