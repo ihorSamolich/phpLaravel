@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
+use App\Models\SpecialOffers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
@@ -11,6 +12,20 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class CategoriesController extends Controller
 {
+
+    /**
+     * @OA\Get(
+     *     tags={"Category"},
+     *     path="/api/categories/names",
+     *     @OA\Response(response="200", description="List Category.")
+     * )
+     */
+    public function getListCategoryNames()
+    {
+        $data = Categories::where('is_delete', false)->get(['id', 'name']);
+        return response()->json($data)
+            ->header("Content-Type", 'application/json; charset=utf-8');
+    }
 
     /**
      * @OA\Get(
@@ -282,7 +297,7 @@ class CategoriesController extends Controller
     {
         $category = Categories::findOrFail($id);
         $category->update(['is_delete' => true]);
-        
+
         return response()->json(['message' => 'Category deleted successfully']);
     }
 

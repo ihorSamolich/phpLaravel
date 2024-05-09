@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\URL;
 
-class VerifyEmail extends Notification
+class VerifyEmail extends Notification implements \Illuminate\Contracts\Mail\Mailable
 {
     /**
      * The callback that should be used to create the verify email URL.

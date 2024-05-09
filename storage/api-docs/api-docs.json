@@ -64,6 +64,108 @@
                 }
             }
         },
+        "/api/login/google": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "a3d99ce6658e33f74952ae30cc043609",
+                "requestBody": {
+                    "description": "User login data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "image"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "image": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/verification": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "a643ac587aceb01bb48e8e0a2201d0ea",
+                "requestBody": {
+                    "description": "User verification data",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "tags": [
@@ -127,6 +229,19 @@
                     },
                     "401": {
                         "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
+        "/api/categories/names": {
+            "get": {
+                "tags": [
+                    "Category"
+                ],
+                "operationId": "248a21d316ae3f09e1bc5e381a2430e1",
+                "responses": {
+                    "200": {
+                        "description": "List Category."
                     }
                 }
             }

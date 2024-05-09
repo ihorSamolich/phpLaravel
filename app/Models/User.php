@@ -50,12 +50,18 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->getKey();
     }
 
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmail);
+    }
+
     public function getJWTCustomClaims()
     {
         return [
             "email" => $this->email,
             "name" => $this->name,
-            "image" => $this->image
+            "image" => $this->image,
+            "verified" => $this->email_verified_at
         ];
     }
 }
