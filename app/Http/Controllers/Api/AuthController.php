@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -12,6 +13,9 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Auth\Events\Registered;
+
+use Google_Client;
+use Google_Service_Oauth2;
 
 class AuthController extends Controller
 {
@@ -87,10 +91,8 @@ class AuthController extends Controller
      *     @OA\MediaType(
      *       mediaType="application/json",
      *       @OA\Schema(
-     *         required={"name", "email", "image"},
-     *         @OA\Property(property="email", type="string"),
-     *         @OA\Property(property="name", type="string"),
-     *         @OA\Property(property="image", type="string"),
+     *         required={"token"},
+     *         @OA\Property(property="token", type="string"),
      *       )
      *     )
      *   ),
@@ -112,64 +114,76 @@ class AuthController extends Controller
      *   @OA\Response(
      *     response=404,
      *     description="Not Found"
-     *   ),
-     *   @OA\Response(
-     *     response=403,
-     *     description="Forbidden"
      *   )
      * )
      */
     public function loginGoogle(Request $request)
     {
-        $validation = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ], [
-            'email.required' => 'The email is required.',
-            'email.email' => 'The email must be a valid email address.',
-        ]);
-        if ($validation->fails()) {
-            return response()->json($validation->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        $token = $request->token;
 
-        $checkUser = User::where('email', $request->email)->first();
+        $clientId = env('GOOGLE_CLIENT_ID');
+        $client = new Google_Client(['client_id' => $clientId]);
 
-        if (!$checkUser) {
-            $imageUrl = $request->image;
-            $imageContent = file_get_contents($imageUrl);
+        try {
+            $payload = $client->verifyIdToken($token);
 
-            $folderName = public_path('uploads');
-            if (!file_exists($folderName)) {
-                mkdir($folderName, 0777);
+            if ($payload) {
+                $userEmail = $payload['email'];
+                $user = User::where('email', $userEmail)->first();
+
+                if (!$user) {
+                    $imageUrl = $payload['picture'];
+                    $imageContent = file_get_contents($imageUrl);
+
+                    $folderName = public_path('uploads');
+                    if (!file_exists($folderName)) {
+                        mkdir($folderName, 0777);
+                    }
+
+                    $imageName = uniqid() . ".webp";
+                    $sizes = [100, 300, 500];
+                    $manager = new ImageManager(new Driver());
+                    foreach ($sizes as $size) {
+                        $fileSave = $size . "_" . $imageName;
+                        $imageRead = $manager->read($imageContent);
+                        $imageRead->scale(width: $size);
+                        $path = public_path('uploads/' . $fileSave);
+                        $imageRead->toWebp()->save($path);
+                    }
+
+                    $userNew = User::create([
+                        'name' => $payload['name'],
+                        'email' => $payload['email'],
+                        'sub' => $payload['sub'],
+                        'password' => Hash::make(Str::random(100)),
+                        'phone' => 'Google account',
+                        'image' => $imageName,
+                    ]);
+
+                    $userNew->email_verified_at = now();
+                    $userNew->save();
+
+                    $token = auth()->login($userNew);
+                    return response()->json(['token' => $token], Response::HTTP_OK);
+
+                }
+
+                if ($user->email_verified_at == null) {
+                    $user->email_verified_at = now();
+                    $user->sub = $payload['sub'];
+
+                    $user->save();
+                }
+
+                $token = auth()->login($user);
+                return response()->json(['token' => $token], Response::HTTP_OK);
+
+            } else {
+                return response()->json(['error' => 'Invalid token'], 401);
             }
-
-            $imageName = uniqid() . ".webp";
-            $sizes = [100, 300, 500];
-            $manager = new ImageManager(new Driver());
-            foreach ($sizes as $size) {
-                $fileSave = $size . "_" . $imageName;
-                $imageRead = $manager->read($imageContent);
-                $imageRead->scale(width: $size);
-                $path = public_path('uploads/' . $fileSave);
-                $imageRead->toWebp()->save($path);
-            }
-
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make(Str::random(100)),
-                'phone' => 'Google account',
-                'image' => $imageName,
-            ]);
-
-            $user->email_verified_at = now();
-            $user->save();
-
-            $token = auth()->login($user);
-            return response()->json(['token' => $token], Response::HTTP_OK);
-
+        } catch (Exception) {
+            return response()->json(['error' => 'Token verification failed'], 500);
         }
-        $token = auth()->login($checkUser);
-        return response()->json(['token' => $token], Response::HTTP_OK);
     }
 
 

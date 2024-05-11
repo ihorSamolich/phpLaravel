@@ -77,18 +77,10 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "name",
-                                    "email",
-                                    "image"
+                                    "token"
                                 ],
                                 "properties": {
-                                    "email": {
-                                        "type": "string"
-                                    },
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "image": {
+                                    "token": {
                                         "type": "string"
                                     }
                                 },
@@ -112,9 +104,6 @@
                     },
                     "404": {
                         "description": "Not Found"
-                    },
-                    "403": {
-                        "description": "Forbidden"
                     }
                 }
             }
