@@ -7,6 +7,7 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -62,24 +63,38 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        $validation = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6'
-        ], [
-            'email.required' => 'The email is required.',
-            'email.email' => 'The email must be a valid email address.',
-            'password.required' => 'The password cannot be empty.',
-            'password.min' => 'The password must be at least 6 characters long.',
-        ]);
-        if ($validation->fails()) {
-            return response()->json($validation->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-        if (!$token = auth()->attempt($validation->validated())) {
-            return response()->json(['error' => 'Uncorrected login data!'], Response::HTTP_UNAUTHORIZED);
-        }
-        return response()->json(['token' => $token], Response::HTTP_OK);
-    }
+        $recaptchaToken = $request->recaptchaToken;
 
+        $secretKey = env('RECAPTCHA_SECRET_ID');
+
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $secretKey,
+            'response' => $recaptchaToken,
+        ]);
+
+        $score = $response['score'];
+
+        if ($response['success'] && $score >= 0.5) {
+            $validation = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required|string|min:6'
+            ], [
+                'email.required' => 'The email is required.',
+                'email.email' => 'The email must be a valid email address.',
+                'password.required' => 'The password cannot be empty.',
+                'password.min' => 'The password must be at least 6 characters long.',
+            ]);
+            if ($validation->fails()) {
+                return response()->json($validation->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+            if (!$token = auth()->attempt($validation->validated())) {
+                return response()->json(['error' => 'Uncorrected login data!'], Response::HTTP_UNAUTHORIZED);
+            }
+            return response()->json(['token' => $token], Response::HTTP_OK);
+        } else {
+            return response()->json(['error' => 'Recaptcha not verified!'], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
 
     /**
      * @OA\Post(
@@ -294,41 +309,55 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
-            'phone' => 'nullable|string|max:255',
-            'image' => 'file',
+        $recaptchaToken = $request->recaptchaToken;
+
+        $secretKey = env('RECAPTCHA_SECRET_ID');
+
+        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
+            'secret' => $secretKey,
+            'response' => $recaptchaToken,
         ]);
 
-        if ($request->hasFile('image')) {
-            $takeImage = $request->file('image');
-            $manager = new ImageManager(new Driver());
+        $score = $response['score'];
 
-            $filename = time();
+        if ($response['success'] && $score >= 0.5) {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:6',
+                'phone' => 'nullable|string|max:255',
+                'image' => 'file',
+            ]);
 
-            $sizes = [100, 300, 500];
+            if ($request->hasFile('image')) {
+                $takeImage = $request->file('image');
+                $manager = new ImageManager(new Driver());
 
-            foreach ($sizes as $size) {
-                $image = $manager->read($takeImage);
-                $image->scale(width: $size, height: $size);
-                $image->toWebp()->save(base_path('public/uploads/' . $size . '_' . $filename . '.webp'));
+                $filename = time();
+
+                $sizes = [100, 300, 500];
+
+                foreach ($sizes as $size) {
+                    $image = $manager->read($takeImage);
+                    $image->scale(width: $size, height: $size);
+                    $image->toWebp()->save(base_path('public/uploads/' . $size . '_' . $filename . '.webp'));
+                }
             }
+
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'phone' => $request->phone,
+                'image' => $filename . '.webp',
+            ]);
+
+            $user->sendEmailVerificationNotification();
+
+            $token = auth()->login($user);
+            return response()->json(['token' => $token], Response::HTTP_CREATED);
+        } else {
+            return response()->json(['error' => 'Recaptcha not verified!'], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'image' => $filename . '.webp',
-        ]);
-
-        $user->sendEmailVerificationNotification();
-
-        $token = auth()->login($user);
-        return response()->json(['token' => $token], Response::HTTP_CREATED);
-
     }
 }

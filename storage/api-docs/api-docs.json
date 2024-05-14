@@ -436,6 +436,30 @@
                 }
             }
         },
+        "/api/product/{id}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "operationId": "b07e629ef68144aa2bb0f82984db6c1d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get Product by ID."
+                    }
+                }
+            }
+        },
         "/api/products/{id}": {
             "get": {
                 "tags": [
@@ -498,6 +522,12 @@
                                     },
                                     "category_id": {
                                         "type": "integer"
+                                    },
+                                    "product_images[]": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "file"
+                                        }
                                     }
                                 },
                                 "type": "object"

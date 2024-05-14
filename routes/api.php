@@ -16,19 +16,20 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/categories', [CategoriesController::class, 'getList']);
-Route::get('/categories/names', [CategoriesController::class, 'getListCategoryNames']);
+Route::get('/categories', [CategoriesController::class, 'getList'])->middleware('auth:api');
+Route::get('/categories/names', [CategoriesController::class, 'getListCategoryNames'])->middleware('auth:api');
 
-Route::post('/categories/create', [CategoriesController::class, 'create']);
-Route::get('/categories/{id}', [CategoriesController::class, 'show']);
-Route::post('/categories/edit/{id}', [CategoriesController::class, 'edit']);
-Route::delete('/categories/{id}', [CategoriesController::class, 'delete']);
-
+Route::post('/categories/create', [CategoriesController::class, 'create'])->middleware('auth:api');
+Route::get('/categories/{id}', [CategoriesController::class, 'show'])->middleware('auth:api');
+Route::post('/categories/edit/{id}', [CategoriesController::class, 'edit'])->middleware('auth:api');
+Route::delete('/categories/{id}', [CategoriesController::class, 'delete'])->middleware('auth:api');
 Route::post('/send/email', [SenderController::class, 'send_email']);
 
 Route::get('/products/discounts', [ProductsController::class, 'getListDiscounts']);
 Route::get('/products', [ProductsController::class, 'getList']);
 Route::get('/products/{id}', [ProductsController::class, 'getByCategory']);
+Route::get('/product/{id}', [ProductsController::class, 'getProduct']);
+
 Route::post('/products/create', [ProductsController::class, 'create']);
 
 Route::get('/specialOffers', [SpecialOffersController::class, 'getList']);
